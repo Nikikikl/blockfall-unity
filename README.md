@@ -8,6 +8,12 @@ Unity is the game engine used to build and run the project. C# is the programmin
 
 A free browser version on itch.io is planned for the future. There is no browser release available yet.
 
+### Current prototype
+
+<img src="docs/images/board-grid.png" alt="BlockFall prototype showing the empty 10-by-20 grid" width="300">
+
+*Current development stage: the 10×20 playfield. Gameplay is not yet implemented.*
+
 ## Motivation
 
 This is a first game project for learning Unity, C#, game architecture, and Git. Game architecture means deciding how parts of the game share responsibilities. Git records changes so the developer can review the project's history.

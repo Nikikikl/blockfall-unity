@@ -139,3 +139,6 @@ crashlytics-build.properties
 
 # Local editor settings
 .vscode/
+
+# macOS Finder files
+.DS_Store
