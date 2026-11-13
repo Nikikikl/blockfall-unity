@@ -4,7 +4,7 @@ public class BoardGrid : MonoBehaviour
 {
     private const int Columns = 10;
     private const int Rows = 20;
-    private const float LineWidth = 0.02f;
+    private const float LineWidth = 0.05f;
 
     private Sprite lineSprite;
 
