@@ -99,6 +99,8 @@ blockfall-unity/
 │   ├── Scripts/         Game scripts: BoardGrid.cs
 │   ├── Settings/        Rendering, input, and scene template assets
 │   └── Welcome/         Welcome content from the Unity 2D template
+├── docs/images/
+│   └── board-grid.png   Current prototype screenshot
 ├── Packages/            Unity package list and locked package versions
 ├── ProjectSettings/     Unity version and project settings
 ├── .agents/             Local Ponytail skill for coding assistance
