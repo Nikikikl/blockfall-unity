@@ -7,6 +7,11 @@ public class PieceMovement : MonoBehaviour
     private float softDropInterval = 0.1f;
     private float fallTimer = 0f;
     private bool isLocked = false;
+
+    public bool IsLocked
+    {
+        get { return isLocked; }
+    }
     void Update()
     {
         if (isLocked)
