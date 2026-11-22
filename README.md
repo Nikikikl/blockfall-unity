@@ -1,52 +1,67 @@
 # BlockFall
 
-## Project overview
+## Project Overview
 
-BlockFall is an original learning project for building a 2D falling-block game with Unity and C#. The goal is to place falling pieces on a 10-by-20 board and clear completed rows. The current prototype draws the board and lets you move one square piece left and right.
+BlockFall is an original 2D falling-block game prototype built with Unity 6.6, C#, and Unity's Universal 2D rendering setup (URP). It is a first game project for learning Unity and building game systems in small steps. The goal is to place falling pieces on a 10×20 board and clear completed rows. A free browser release on itch.io is planned.
 
-Unity is the game engine used to build and run the project. C# is the programming language used for its scripts. The project uses the Universal 2D setup with Universal Render Pipeline (URP), Unity's system for drawing the game on screen.
+## Current Status
 
-A free browser version on itch.io is planned for the future. There is no browser release available yet.
+The scene creates a 10×20 grid and spawns one cyan 2×2 square at the top. You can move it sideways, speed up its fall, or drop it in one frame. The square locks when it can no longer move down, and the game records the four cells it occupies.
 
-### Early playfield screenshot
+## Gameplay Screenshots
 
-<img src="docs/images/board-grid.png" alt="BlockFall prototype showing the empty 10-by-20 grid" width="300">
+<img src="docs/images/board-grid.png" alt="Unity Game view showing the empty 10-by-20 BlockFall grid on a blue background" width="300">
 
-*The 10×20 playfield before the square piece was added.*
+*Early playfield milestone. This Unity screenshot shows the grid before the square piece was added.*
 
-## Motivation
+## Development Milestones
 
-This is a first game project for learning Unity, C#, game architecture, and Git. Game architecture means deciding how parts of the game share responsibilities. Git records changes so the developer can review the project's history.
+1. Set up the Unity project and drew a centered 10×20 grid. An orthographic camera frames the full board in a portrait Game view.
+2. Built the first 2×2 square from four cyan blocks.
+3. Added left and right arrow controls and checked the side boundaries.
+4. Added automatic falling, one cell at a time.
+5. Added Soft Drop on Down Arrow and Hard Drop on Space.
+6. Locked the piece on landing and disabled further movement.
+7. Saved the square as `SquarePiece.prefab` and used `GameManager` to create it when the scene starts.
+8. Added a record of occupied cells and checked each move against the board edges and those cells.
+9. Moved creation into `SpawnPiece()` so a future game loop can reuse it. Today, only `Start()` calls it.
 
-The aim is to learn through small, testable steps and keep the code understandable as the game grows.
+## Controls
 
-## Current status
+Click inside the Game view in Play Mode before using the keyboard.
 
-The prototype includes:
+| Input | Action |
+| --- | --- |
+| Left Arrow / Right Arrow | Move one cell per press if the destination is clear. |
+| Hold Down Arrow | Soft Drop. Try to fall one cell every 0.1 seconds. Release to restore the normal one-second interval. |
+| Space | Hard Drop. Move to the lowest reachable row in one frame and lock the piece. |
 
-- A 10-column, 20-row grid centered at world position `(0, 0)`.
-- Cells measuring 1 Unity unit on each side. A Unity unit is a distance in the game world, not a screen pixel.
-- Thin gray lines drawn with `SpriteRenderer`, visible in the Game view during Play Mode.
-- An orthographic camera set up to show the full board, verified in Unity Game view at a portrait aspect ratio of **9:16**.
-- One 2×2 square piece (O-tetromino) made of four cyan blocks, each 1×1 Unity unit.
-- Left and Right Arrow controls that move the piece one cell per press and stop it at the sides of the board.
+## Project Structure
 
-The developer manually checked the grid and the square piece in Unity Play Mode, including movement and both horizontal limits. The Unity Console showed zero errors and zero warnings during that check.
+| Path | Purpose |
+| --- | --- |
+| [Assets/Scenes/SampleScene.unity](Assets/Scenes/SampleScene.unity) | Main scene with the camera, grid, and game manager. |
+| [Assets/Prefabs/SquarePiece.prefab](Assets/Prefabs/SquarePiece.prefab) | Reusable square piece with four blocks and a movement component. |
+| [Assets/Scripts/BoardGrid.cs](Assets/Scripts/BoardGrid.cs) | Draws the grid when the scene starts. |
+| [Assets/Scripts/PieceMovement.cs](Assets/Scripts/PieceMovement.cs) | Reads keyboard input, checks moves, and locks the piece. |
+| [Assets/Scripts/GameManager.cs](Assets/Scripts/GameManager.cs) | Spawns the first piece and records occupied cells. |
+| [Assets/Settings/](Assets/Settings/) | Rendering, input, and scene template assets. |
+| [Assets/Welcome/](Assets/Welcome/) | Welcome content from the Unity 2D template. |
+| [Packages/](Packages/) | Unity package list and locked package versions. |
+| [ProjectSettings/](ProjectSettings/) | Unity version and project settings. |
+| [docs/images/](docs/images/) | Screenshots from the project's milestones. |
 
-Automatic falling, rotation, collisions, line clearing, and scoring are still planned.
+Keep `.meta` files with their assets. Unity uses the identifiers in them to find assets referenced by scenes and prefabs. See [AGENTS.md](AGENTS.md) for the project workflow.
 
-## Planned features
+## How It Works
 
-The intended direction is:
+**BoardGrid** draws 11 vertical and 21 horizontal lines using Unity's `SpriteRenderer`, which draws 2D images. The lines are one Unity unit apart. The board runs from X = −5 to 5 and Y = −10 to 10, with the lower-left cell at index `(0, 0)`.
 
-- More piece shapes, automatic falling, drop controls, and rotation.
-- Collision checks and piece placement, so pieces can land and stack on each other.
-- Clearing completed rows, tracking a score, and handling game over and restart.
-- A browser build and a free release on itch.io.
+**SquarePiece and PieceMovement.** A prefab is a saved object you can create copies of. This prefab groups four block objects under one parent so they move together. `PieceMovement` reads keys through the Unity Input System. Before moving, `CanMove()` works out the destination cell of each block and asks `GameManager.IsCellFree()` whether the cell is inside the board and empty. The piece locks when the step below it is blocked.
 
-These are future goals. Their details and implementation order may change during development.
+**GameManager** calls `SpawnPiece()` at startup to create the square at `(-1, 8, 0)`. The manager stores a 10×20 array named `occupiedCells`, with one true-or-false value per cell. When the piece locks, `WorldToCell()` maps each block's world position to a column and row. The manager marks all four cells as occupied, logs `Piece landed!` once, and clears its reference to the active piece.
 
-## Getting started
+## Getting Started
 
 ### 1. Install Unity
 
@@ -88,100 +103,25 @@ Open this existing project; there is no need to create another project from a te
 
 This is an Editor preview setting. A custom aspect ratio added on one computer may be missing on another; add it there using the same steps if needed.
 
-You should see a gray 10-by-20 grid with a cyan square piece. Click inside the **Game** view, then press **Left Arrow** or **Right Arrow** to move the square one cell. Press the same arrow repeatedly to reach the edge. Further presses in that direction leave the piece in place. The square stays on the same row.
+A cyan square appears at the top of the board and starts falling. Click inside the **Game** view to give it keyboard focus, then try the controls above. Press **Space** to drop the piece to the bottom. It should stay in place, and the **Console** should show one `Piece landed!` message.
 
-Click **Play** again to stop. To check for errors, open **Window > General > Console**.
+Click **Play** again to stop. To open the Console, choose **Window > General > Console**.
 
-## Project structure
+## Development Roadmap
 
-```text
-blockfall-unity/
-├── Assets/
-│   ├── Scenes/          Main scene: SampleScene.unity
-│   ├── Scripts/         Game scripts: BoardGrid.cs and PieceMovement.cs
-│   ├── Settings/        Rendering, input, and scene template assets
-│   └── Welcome/         Welcome content from the Unity 2D template
-├── docs/images/
-│   └── board-grid.png   Screenshot of the grid before the square piece
-├── Packages/            Unity package list and locked package versions
-├── ProjectSettings/     Unity version and project settings
-├── .agents/             Local Ponytail skill for coding assistance
-├── .gitignore           Files Git should leave out
-├── AGENTS.md            Project instructions for coding assistants
-└── README.md            Project overview and setup instructions
-```
+- [x] Draw the grid and frame it with an orthographic camera.
+- [x] Move the square and enforce the board boundaries.
+- [x] Add automatic falling, Soft Drop, Hard Drop, and locking.
+- [x] Spawn the initial square from a prefab and record its occupied cells.
+- [x] Check moves against boundaries and occupied cells.
+- [ ] Spawn the next piece on landing and test stacking in Play Mode.
+- [ ] Add more piece shapes, random selection, and rotation.
+- [ ] Clear full rows and add scoring, levels, and game over.
+- [ ] Add restart, pause, a next-piece preview, menus, and audio.
+- [ ] Build and test the browser version, then publish on itch.io.
 
-[Packages/manifest.json](Packages/manifest.json) lists the packages the project uses. The [.gitignore](.gitignore) excludes generated folders such as `Library`, `Temp`, and `Logs`; Unity recreates these when needed.
+## Known Limitations
 
-Keep `.meta` files with their associated assets. Unity stores asset identifiers in these files and uses them to keep references between scenes, scripts, and other resources.
-
-## How it works
-
-### BoardGrid and SpriteRenderer
-
-[BoardGrid.cs](Assets/Scripts/BoardGrid.cs) is a component attached to the `BoardGrid` object in the main scene. A GameObject is Unity's container for an item in a scene; components give it behavior or a visual appearance.
-
-When Play Mode starts, Unity calls the script's `Start()` method. The script creates one white sprite, a 2D image, and shares it across 32 line objects. Each object has a `SpriteRenderer`, the component that draws a sprite in the game. The script stretches the sprite into a thin rectangle and colors it gray.
-
-There are 11 vertical lines and 21 horizontal lines, including the outer edges. Their spacing creates 10 columns and 20 rows without creating 200 cell objects. The cells have no fill.
-
-The line centers run from `-5` to `5` on X and from `-10` to `10` on Y. Line thickness is `0.05` Unity units. The board object has position and rotation set to zero and scale set to one, so the grid stays centered with 1-unit cells.
-
-The lines appear when the scene runs. Stopping Play Mode removes those runtime objects. The grid is a visual guide; it does not yet store which cells contain blocks.
-
-### SquarePiece and keyboard input
-
-The scene groups the four cyan blocks under one parent GameObject named `SquarePiece`. Each block is a child object, so moving the parent moves all four blocks together.
-
-[PieceMovement.cs](Assets/Scripts/PieceMovement.cs) reads the arrow keys through the Unity Input System, the package that handles keyboard input. Each press moves the parent one Unity unit left or right. The script keeps the parent's X position between `-5` and `3`. At `3`, the piece's right edge reaches `5`, the right edge of the board, because the piece is two units wide.
-
-### Orthographic camera
-
-An orthographic camera draws objects without perspective: their size does not shrink with distance from the camera. This suits a flat 2D board.
-
-In [SampleScene.unity](Assets/Scenes/SampleScene.unity), the main camera sits at `(0, 0, -10)` and looks toward the board at `Z = 0`. Its orthographic Size is `11`, which means it shows 11 units above its center and 11 below it. That gives the 20-unit-tall board some space at the top and bottom. The visible width depends on the Game view's aspect ratio.
-
-## Development roadmap
-
-- [x] Create the Unity project and set up the development environment.
-- [x] Connect the project to GitHub.
-- [x] Draw a centered 10-by-20 grid using SpriteRenderer.
-- [x] Improve grid line visibility.
-- [x] Frame the full board with an orthographic camera.
-- [x] Check the grid in Unity Play Mode.
-- [x] Static 2×2 square piece.
-- [x] Basic horizontal controls with the arrow keys.
-- [x] Horizontal limits for the square piece.
-- [ ] Seven piece shapes.
-- [ ] Random spawning.
-- [ ] Automatic falling.
-- [ ] Soft and hard drop.
-- [ ] Rotation.
-- [ ] General boundaries and collisions.
-- [ ] Piece locking.
-- [ ] Line clearing.
-- [ ] Score, level and game over.
-- [ ] Restart, pause and next-piece preview.
-- [ ] Menu, audio, testing.
-- [ ] Web build and itch.io release.
-
-## Development workflow
-
-Work on one small task at a time. Keep implementations readable and prefer built-in Unity and C# features over extra dependencies.
-
-1. Check the existing code and decide what the task needs to change.
-2. Make the smallest complete change for that task.
-3. Check the code and test the affected behavior in the Unity Editor. For visual changes, check the Game view in Play Mode.
-4. Review the Git diff, the list of file changes, and record each completed, verified milestone in its own commit. A commit is a saved checkpoint in Git's history.
-5. Update this README when the setup instructions or project status change.
-
-Use the Unity Project window when moving or renaming assets so Unity can preserve their references. Commit the corresponding `.meta` files alongside the assets, and keep generated folders out of Git.
-
-See [AGENTS.md](AGENTS.md) for the project's instructions for coding assistants.
-
-## Project limitations
-
-- This prototype supports horizontal movement for one square piece. A full game loop is still planned. Automatic falling, rotation, collisions, piece locking, line clearing, and scoring are not implemented.
-- The grid dimensions, line thickness, and color are fixed in the script.
-- The camera uses a fixed size. Very narrow aspect ratios can crop the sides of the board; automatic screen fitting is not implemented.
-- Manual Play Mode testing covered the grid, the square piece, and its horizontal movement and limits. Browser builds and browser behavior still need validation before release.
+- Each Play Mode run uses one square. Restart Play Mode to try another drop.
+- The movement code checks occupied cells. Stacking and collisions between separate pieces still need Play Mode testing once the next piece can spawn.
+- The camera has a fixed size, so a very narrow Game view can crop the board. A browser release is still planned.
