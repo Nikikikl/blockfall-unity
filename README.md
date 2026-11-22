@@ -10,9 +10,17 @@ The scene creates a 10×20 grid and spawns one cyan 2×2 square at the top. You 
 
 ## Gameplay Screenshots
 
-<img src="docs/images/board-grid.png" alt="Unity Game view showing the empty 10-by-20 BlockFall grid on a blue background" width="300">
+| Playfield setup | Square piece spawn |
+| --- | --- |
+| <img src="docs/images/board-grid.png" alt="Empty 10-by-20 grid in the Unity Game view" width="240"> | <img src="docs/images/square-piece.png" alt="Cyan 2-by-2 square at the top center of the grid" width="240"> |
 
-*Early playfield milestone. This Unity screenshot shows the grid before the square piece was added.*
+| Left movement | Right movement |
+| --- | --- |
+| <img src="docs/images/movement.png" alt="Cyan square at the left edge of the board" width="240"> | <img src="docs/images/movement-right.png" alt="Cyan square at the right edge of the board" width="240"> |
+
+**Landing**. The square locks at the bottom, and the Unity Console shows one `Piece landed!` message.
+
+<img src="docs/images/piece-landed.png" alt="Square at the bottom of the board with one Piece landed message in the Unity Console" width="520">
 
 ## Development Milestones
 
