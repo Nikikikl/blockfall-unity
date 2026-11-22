@@ -2,17 +2,17 @@
 
 ## Project overview
 
-BlockFall is an original learning project: a 2D falling-block game built with Unity and C#. The goal is to place falling pieces on a 10-by-20 board and clear completed rows. Development is at the visual playfield stage.
+BlockFall is an original learning project for building a 2D falling-block game with Unity and C#. The goal is to place falling pieces on a 10-by-20 board and clear completed rows. The current prototype draws the board and lets you move one square piece left and right.
 
 Unity is the game engine used to build and run the project. C# is the programming language used for its scripts. The project uses the Universal 2D setup with Universal Render Pipeline (URP), Unity's system for drawing the game on screen.
 
 A free browser version on itch.io is planned for the future. There is no browser release available yet.
 
-### Current prototype
+### Early playfield screenshot
 
 <img src="docs/images/board-grid.png" alt="BlockFall prototype showing the empty 10-by-20 grid" width="300">
 
-*Current development stage: the 10×20 playfield. Gameplay is not yet implemented.*
+*The 10×20 playfield before the square piece was added.*
 
 ## Motivation
 
@@ -22,23 +22,25 @@ The aim is to learn through small, testable steps and keep the code understandab
 
 ## Current status
 
-The project currently displays an empty playfield:
+The prototype includes:
 
 - A 10-column, 20-row grid centered at world position `(0, 0)`.
 - Cells measuring 1 Unity unit on each side. A Unity unit is a distance in the game world, not a screen pixel.
 - Thin gray lines drawn with `SpriteRenderer`, visible in the Game view during Play Mode.
 - An orthographic camera set up to show the full board, verified in Unity Game view at a portrait aspect ratio of **9:16**.
+- One 2×2 square piece (O-tetromino) made of four cyan blocks, each 1×1 Unity unit.
+- Left and Right Arrow controls that move the piece one cell per press and stop it at the sides of the board.
 
-The development environment and GitHub repository are set up. The developer has checked the grid in Unity Play Mode, the Editor's way to run a scene without building a separate application.
+The developer manually checked the grid and the square piece in Unity Play Mode, including movement and both horizontal limits. The Unity Console showed zero errors and zero warnings during that check.
 
-Falling pieces, controls, scoring, and other gameplay mechanics are not implemented yet.
+Automatic falling, rotation, collisions, line clearing, and scoring are still planned.
 
 ## Planned features
 
 The intended direction is:
 
-- Falling pieces with movement and rotation controls.
-- Board boundary checks and piece placement, so pieces stay inside the board and stack on each other.
+- More piece shapes, automatic falling, drop controls, and rotation.
+- Collision checks and piece placement, so pieces can land and stack on each other.
 - Clearing completed rows, tracking a score, and handling game over and restart.
 - A browser build and a free release on itch.io.
 
@@ -86,9 +88,9 @@ Open this existing project; there is no need to create another project from a te
 
 This is an Editor preview setting. A custom aspect ratio added on one computer may be missing on another; add it there using the same steps if needed.
 
-You should see a gray 10-by-20 grid on a blue background, with the full board in view. The scene already contains the `BoardGrid` component; you do not need to add it again. Nothing falls or responds to input at this stage.
+You should see a gray 10-by-20 grid with a cyan square piece. Click inside the **Game** view, then press **Left Arrow** or **Right Arrow** to move the square one cell. Press the same arrow repeatedly to reach the edge. Further presses in that direction leave the piece in place. The square stays on the same row.
 
-Click **Play** again to stop. To check for errors, open **Window > General > Console**; the expected result is no error messages from `BoardGrid`.
+Click **Play** again to stop. To check for errors, open **Window > General > Console**.
 
 ## Project structure
 
@@ -96,11 +98,11 @@ Click **Play** again to stop. To check for errors, open **Window > General > Con
 blockfall-unity/
 ├── Assets/
 │   ├── Scenes/          Main scene: SampleScene.unity
-│   ├── Scripts/         Game scripts: BoardGrid.cs
+│   ├── Scripts/         Game scripts: BoardGrid.cs and PieceMovement.cs
 │   ├── Settings/        Rendering, input, and scene template assets
 │   └── Welcome/         Welcome content from the Unity 2D template
 ├── docs/images/
-│   └── board-grid.png   Current prototype screenshot
+│   └── board-grid.png   Screenshot of the grid before the square piece
 ├── Packages/            Unity package list and locked package versions
 ├── ProjectSettings/     Unity version and project settings
 ├── .agents/             Local Ponytail skill for coding assistance
@@ -127,6 +129,12 @@ The line centers run from `-5` to `5` on X and from `-10` to `10` on Y. Line thi
 
 The lines appear when the scene runs. Stopping Play Mode removes those runtime objects. The grid is a visual guide; it does not yet store which cells contain blocks.
 
+### SquarePiece and keyboard input
+
+The scene groups the four cyan blocks under one parent GameObject named `SquarePiece`. Each block is a child object, so moving the parent moves all four blocks together.
+
+[PieceMovement.cs](Assets/Scripts/PieceMovement.cs) reads the arrow keys through the Unity Input System, the package that handles keyboard input. Each press moves the parent one Unity unit left or right. The script keeps the parent's X position between `-5` and `3`. At `3`, the piece's right edge reaches `5`, the right edge of the board, because the piece is two units wide.
+
 ### Orthographic camera
 
 An orthographic camera draws objects without perspective: their size does not shrink with distance from the camera. This suits a flat 2D board.
@@ -141,14 +149,15 @@ In [SampleScene.unity](Assets/Scenes/SampleScene.unity), the main camera sits at
 - [x] Improve grid line visibility.
 - [x] Frame the full board with an orthographic camera.
 - [x] Check the grid in Unity Play Mode.
-- [ ] Static 2×2 square piece.
+- [x] Static 2×2 square piece.
+- [x] Basic horizontal controls with the arrow keys.
+- [x] Horizontal limits for the square piece.
 - [ ] Seven piece shapes.
 - [ ] Random spawning.
 - [ ] Automatic falling.
-- [ ] Horizontal controls.
 - [ ] Soft and hard drop.
 - [ ] Rotation.
-- [ ] Boundaries and collisions.
+- [ ] General boundaries and collisions.
 - [ ] Piece locking.
 - [ ] Line clearing.
 - [ ] Score, level and game over.
@@ -172,7 +181,7 @@ See [AGENTS.md](AGENTS.md) for the project's instructions for coding assistants.
 
 ## Project limitations
 
-- This is an early visual prototype, not a playable game. There are no falling pieces, controls, collision or placement rules, row clearing, scores, or game states yet.
+- This prototype supports horizontal movement for one square piece. A full game loop is still planned. Automatic falling, rotation, collisions, piece locking, line clearing, and scoring are not implemented.
 - The grid dimensions, line thickness, and color are fixed in the script.
 - The camera uses a fixed size. Very narrow aspect ratios can crop the sides of the board; automatic screen fitting is not implemented.
-- The reported manual check covers the grid in Unity Play Mode. Browser builds and browser behavior still need validation before release.
+- Manual Play Mode testing covered the grid, the square piece, and its horizontal movement and limits. Browser builds and browser behavior still need validation before release.
