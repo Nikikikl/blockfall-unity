@@ -6,8 +6,14 @@ public class PieceMovement : MonoBehaviour
     private float fallInterval = 1f;
     private float softDropInterval = 0.1f;
     private float fallTimer = 0f;
+    private bool isLocked = false;
     void Update()
     {
+        if (isLocked)
+        {
+            return;
+        }
+
         float currentInterval = fallInterval;
 
         if (Keyboard.current != null &&
@@ -22,6 +28,12 @@ public class PieceMovement : MonoBehaviour
         {
             transform.position += Vector3.down;
             fallTimer = 0f;
+        }
+
+        if (transform.position.y <= -10)
+        {
+            isLocked = true;
+            return;
         }
 
         if (Keyboard.current != null &&
@@ -45,6 +57,8 @@ public class PieceMovement : MonoBehaviour
             {
                 transform.position += Vector3.down;
             }
+
+            isLocked = true;
         }
     }
 }
