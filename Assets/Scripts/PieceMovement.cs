@@ -37,5 +37,14 @@ public class PieceMovement : MonoBehaviour
         {
             transform.position += Vector3.right;
         }
+
+        if (Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            while (transform.position.y > -10)
+            {
+                transform.position += Vector3.down;
+            }
+        }
     }
 }
