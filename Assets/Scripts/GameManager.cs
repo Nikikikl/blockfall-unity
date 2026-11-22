@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,8 +11,23 @@ public class GameManager : MonoBehaviour
     {
         SpawnPiece();
     }
+
+    private bool CanSpawnPiece()
+    {
+        return IsCellFree(new Vector2Int(4, 18)) &&
+               IsCellFree(new Vector2Int(5, 18)) &&
+               IsCellFree(new Vector2Int(4, 19)) &&
+               IsCellFree(new Vector2Int(5, 19));
+    }
+
     private void SpawnPiece()
     {
+        if (!CanSpawnPiece())
+        {
+            Debug.Log("Game Over!");
+            return;
+        }
+
         GameObject piece = Instantiate(
             squarePiecePrefab,
             new Vector3(-1, 8, 0),
@@ -27,6 +43,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Piece landed!");
             RegisterPiece(activePiece);
             activePiece = null;
+            SpawnPiece();
         }
     }
 
